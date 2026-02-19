@@ -2,135 +2,129 @@
 
 ## 📌 Description
 
-Ce projet a pour objectif de mettre en place un pipeline CI/CD complet dans le cadre du TP DevOps.
+Ce projet met en place un pipeline CI/CD complet dans le cadre du TP DevOps.  
+Le pipeline est configuré avec **GitHub Actions** et utilise un **self-hosted runner local (Windows)**.  
+L'application est une app **Frontend + Backend Node.js** avec base de données **SQLite** et tests automatisés.
 
-Le pipeline est configuré avec **GitHub Actions** et utilise un **self-hosted runner local (Windows)**.
-
-L’application est une application **Frontend + Backend Node.js** avec base de données SQLite et tests automatisés.
-
+---
 
 ## 🏗️ Architecture du projet
-
+```
 tp-devops/
-│── app.js
-│── db.js
-│── package.json
-│── public/
-│ └── index.html
-│── tests/
-│ ├── unit.test.js
-│ └── integration.test.js
-│── .github/
-│ └── workflows/
-│ └── ci.yml
+├── app.js
+├── db.js
+├── package.json
+├── public/
+│   └── index.html
+├── tests/
+│   ├── unit.test.js
+│   └── integration.test.js
+└── .github/
+    └── workflows/
+        └── ci.yml
+```
 
-
+---
 
 ## ⚙️ Installation en local
 
-1️⃣ Cloner le projet
+**1. Cloner le projet**
 ```bash
 git clone https://github.com/USERNAME/Projet-Devops-CICD.git
 cd Projet-Devops-CICD
-2️⃣ Installer les dépendances
+```
+
+**2. Installer les dépendances**
+```bash
 npm install
-3️⃣ Lancer l’application
+```
+
+**3. Lancer l'application**
+```bash
 npm start
-Application disponible sur :
+```
 
-http://localhost:3000
-🔐 Variables nécessaires
-Variables utilisées dans le pipeline :
+Application disponible sur : [http://localhost:3000](http://localhost:3000)
 
-Variable non sensible
-APP_NAME = TPDevOps
-Secret GitHub
-DB_PASSWORD
-Le secret est configuré dans :
+---
 
-GitHub → Settings → Secrets and Variables → Actions
-🧪 Tests
+## 🔐 Variables nécessaires
+
+| Type | Nom | Valeur |
+|------|-----|--------|
+| Variable | `APP_NAME` | `TPDevOps` |
+| Secret GitHub | `DB_PASSWORD` | *(confidentiel)* |
+
+> Les secrets sont configurés dans : **GitHub → Settings → Secrets and Variables → Actions**
+
+---
+
+## 🧪 Tests
+
 Deux types de tests sont exécutés automatiquement :
 
-Test unitaire
+**Tests unitaires**
+```bash
 npm run test:unit
-Test d’intégration
+```
+
+**Tests d'intégration**
+```bash
 npm run test:integration
-Les tests sont exécutés à chaque pipeline.
+```
 
-⚡ Pipeline CI/CD
-Le pipeline contient les étapes suivantes :
+---
 
-Installation des dépendances
+## ⚡ Pipeline CI/CD
 
-Tests unitaires
+Le pipeline se déclenche automatiquement sur **push** et **pull request**.
 
-Tests d’intégration
+### Étapes du pipeline
 
-Génération d’artefacts
+| Ordre | Étape | Description |
+|-------|-------|-------------|
+| 1 | Installation | Installation des dépendances |
+| 2 | Tests unitaires | Exécution en parallèle |
+| 2 | Tests d'intégration | Exécution en parallèle |
+| 3 | Génération d'artefacts | Rapport de tests |
+| 4 | Analyse des artefacts | Téléchargement et analyse |
+| 5 | Build Dev | Build environnement DEV (en parallèle) |
+| 5 | Build Prod | Build environnement PROD (en parallèle) |
 
-Analyse des artefacts
+### 🖥️ Runner local
 
-Build selon environnement
-
-Déclenchement automatique :
-
-push
-
-pull request
-
-🖥️ Runner local
 Un self-hosted runner GitHub est utilisé pour exécuter les jobs sur une machine locale Windows.
-
-Configuration :
-
+```yaml
 runs-on: self-hosted
-📦 Artefacts
-Le pipeline produit plusieurs artefacts :
+```
 
-Rapport de tests (test-artifact)
+---
 
-Build environnement dev (build-dev)
+## 📦 Artefacts
 
-Build environnement prod (build-prod)
+Le pipeline produit plusieurs artefacts téléchargeables depuis GitHub :
 
-Les artefacts :
+| Artefact | Description |
+|----------|-------------|
+| `test-artifact` | Rapport de tests |
+| `build-dev` | Build environnement Dev |
+| `build-prod` | Build environnement Prod |
 
-sont téléchargeables depuis GitHub
+Les artefacts ont une **durée de conservation définie** et sont **réutilisés entre jobs**.
 
-ont une durée de conservation définie
+### 🔄 Réutilisation entre jobs
+```
+unit-tests       →  génère   →  test-artifact
+analyse-artifact →  télécharge →  test-artifact
+```
 
-sont réutilisés entre jobs
+---
 
-🔄 Réutilisation des artefacts
-Un job génère un artefact :
+## 🌍 Build multi-environnements
 
-unit-tests → test-artifact
-Un autre job le récupère :
+| Environnement | Variable `API_URL` |
+|---------------|-------------------|
+| `DEV` | `https://dev.api.local` |
+| `PROD` | `https://prod.api.local` |
 
-analyse-artifact → download-artifact
-⚙️ Parallélisation
-Les jobs suivants sont exécutés en parallèle :
-
-unit-tests
-
-integration-tests
-
-Puis :
-
-build-dev
-
-build-prod
-
-Cela permet une orchestration optimisée du pipeline.
-
-🌍 Build multi-environnements
-Deux environnements sont configurés :
-
-Dev
-Environment: DEV
-API_URL=https://dev.api.local
-Prod
-Environment: PROD
-API_URL=https://prod.api.local
-Chaque environnement génère un artefact différent.
+Chaque environnement génère un artefact distinct.
