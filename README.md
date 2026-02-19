@@ -28,8 +28,7 @@ tp-devops/
 
 ## ⚙️ Installation en local
 
-### 1️⃣ Cloner le projet
-
+1️⃣ Cloner le projet
 ```bash
 git clone https://github.com/USERNAME/Projet-Devops-CICD.git
 cd Projet-Devops-CICD
