@@ -65,7 +65,7 @@
 
       if (r.ok) {
         document.getElementById("msg").value = "";
-        document.getElementById("status").textContent = "OK ✅";
+        document.getElementById("status").textContent = "OK";
         await loadMessages();
       } else {
         const e = await r.json().catch(() => ({}));
