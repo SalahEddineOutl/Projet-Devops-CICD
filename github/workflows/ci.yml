@@ -1,0 +1,55 @@
+name: CI-CD
+
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  install:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install
+
+  unit-tests:
+    runs-on: self-hosted
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install
+      - run: npm run test:unit
+
+  integration-tests:
+    runs-on: self-hosted
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install
+      - run: npm run test:integration
+
+  build-dev:
+    runs-on: self-hosted
+    needs: [unit-tests, integration-tests]
+    env:
+      APP_ENV: dev
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "DEV BUILD" > build.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-dev
+          path: build.txt
+
+  build-prod:
+    runs-on: self-hosted
+    needs: [unit-tests, integration-tests]
+    env:
+      APP_ENV: prod
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "PROD BUILD" > build.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-prod
+          path: build.txt
