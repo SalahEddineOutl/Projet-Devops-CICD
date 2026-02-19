@@ -1,0 +1,11 @@
+﻿{
+  "agentId": 2,
+  "agentName": "MSI",
+  "poolId": 1,
+  "poolName": "Default",
+  "serverUrl": "https://pipelinesghubeus5.actions.githubusercontent.com/iX035Wdu9IoGwxOzgpiebAMDUMVCTri6Ak7RkCRhPjLPSuC6OT/",
+  "gitHubUrl": "https://github.com/SalahEddineOutl/Projet-Devops-CICD",
+  "workFolder": "_work",
+  "useV2Flow": true,
+  "serverUrlV2": "https://broker.actions.githubusercontent.com/"
+}
