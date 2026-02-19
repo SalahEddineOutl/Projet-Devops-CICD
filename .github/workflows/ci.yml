@@ -23,7 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm install
-      - run: npm run test:unit
+      - run: npm run test:unit | tee test-report.txt
+      # Upload artefact tests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: test-artifact
+          path: test-report.txt
+          retention-days: 7
 
   integration-tests:
     runs-on: self-hosted
@@ -34,6 +40,21 @@ jobs:
       - uses: actions/checkout@v4
       - run: npm install
       - run: npm run test:integration
+
+  analyse-artifact:
+    runs-on: self-hosted
+    needs: unit-tests
+    steps:
+
+      # Télécharger artefact du job précédent
+      - uses: actions/download-artifact@v4
+        with:
+          name: test-artifact
+
+      # Utiliser artefact
+      - run: |
+          echo "Content of artifact:"
+          cat test-report.txt
 
   build-dev:
     runs-on: self-hosted
