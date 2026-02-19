@@ -8,9 +8,14 @@ jobs:
 
   install:
     runs-on: self-hosted
+    env:
+      APP_NAME: TPDevOps
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - run: npm install
+      - run: echo "App name is $APP_NAME"
+      - run: echo "Password is $DB_PASSWORD"   # sera masqué automatiquement
 
   unit-tests:
     runs-on: self-hosted
@@ -23,6 +28,8 @@ jobs:
   integration-tests:
     runs-on: self-hosted
     needs: install
+    env:
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - run: npm install
